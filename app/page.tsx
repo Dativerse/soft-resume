@@ -30,23 +30,70 @@ const cvTypeOptions = Object.keys(resumes).map((id) => ({
   label: id.charAt(0).toUpperCase() + id.slice(1),
 }));
 
-function PdfFrame({ src, cvType }: { src: string; cvType: string }) {
+type PdfState = { cvType: string; url: string } | { cvType: string; error: true };
+
+/**
+ * Renders the PDF in the browser with the current origin, so project links
+ * inside it resolve to whichever host served the page. `@react-pdf/renderer`
+ * is loaded on demand to keep it out of the initial bundle.
+ */
+function useResumePdf(cvType: string | null) {
+  const [state, setState] = useState<PdfState | null>(null);
+
+  useEffect(() => {
+    if (!cvType) return;
+    let cancelled = false;
+    let url: string | null = null;
+
+    import("@/components/resume/renderResumePdf")
+      .then(({ renderResumePdf }) => renderResumePdf(resumes[cvType], cvType, window.location.origin))
+      .then((blob) => {
+        if (cancelled) return;
+        url = URL.createObjectURL(blob);
+        setState({ cvType, url });
+      })
+      .catch((error: unknown) => {
+        console.error("[resume-pdf] Failed to generate PDF", error);
+        if (!cancelled) setState({ cvType, error: true });
+      });
+
+    return () => {
+      cancelled = true;
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [cvType]);
+
+  // Ignore a result left over from the previous `cvType` while the new one renders.
+  return state?.cvType === cvType ? state : null;
+}
+
+function PdfFrame({ pdf, cvType }: { pdf: PdfState | null; cvType: string }) {
   const [loading, setLoading] = useState(true);
+
+  if (pdf && "error" in pdf) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="text-red-400 font-mono">generating_pdf({cvType}) failed — please reload.</p>
+      </div>
+    );
+  }
 
   return (
     <>
-      {loading && (
+      {(!pdf || loading) && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-900/80 backdrop-blur-sm">
           <div className="w-12 h-12 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mb-4"></div>
           <p className="text-blue-400 font-mono animate-pulse">generating_pdf({cvType})...</p>
         </div>
       )}
-      <iframe
-        src={`${src}#toolbar=0&navpanes=0&scrollbar=0`}
-        className="w-full h-full border-none"
-        title="Resume Preview"
-        onLoad={() => setLoading(false)}
-      />
+      {pdf && (
+        <iframe
+          src={`${pdf.url}#toolbar=0&navpanes=0&scrollbar=0`}
+          className="w-full h-full border-none"
+          title="Resume Preview"
+          onLoad={() => setLoading(false)}
+        />
+      )}
     </>
   );
 }
@@ -88,18 +135,17 @@ function ResumeContent() {
     router.replace(query ? `/?${query}` : "/", { scroll: false });
   }, [router, searchParams, validParam]);
 
-  if (!IS_DEV && !isHydrated) return <LoadingScreen />;
-
+  const isReady = IS_DEV || isHydrated;
   const cvType = IS_DEV
     ? (validParam ?? defaultCvType)
     : (validParam ?? storedCvType ?? defaultCvType);
 
+  // Wait until the stored CV is known so we don't render the default one first.
+  const pdf = useResumePdf(isReady ? cvType : null);
+
+  if (!isReady) return <LoadingScreen />;
+
   const currentData = resumes[cvType];
-  // Static export pre-renders one PDF per known `cvType` (see
-  // app/api/resume/pdf/[cvType]/route.tsx) — no query-driven server logic.
-  // The `.pdf` suffix is baked into the exported filename so static hosts
-  // can infer `Content-Type: application/pdf` from the extension alone.
-  const pdfSrc = `/api/resume/pdf/${encodeURIComponent(cvType)}.pdf`;
   const downloadFilename = `Resume_${cvType}_${currentData.personal.name.replace(/\s+/g, "_")}.pdf`;
 
   const handleTypeChange = (typeId: string) => {
@@ -108,11 +154,15 @@ function ResumeContent() {
     router.replace(`/?${params.toString()}`, { scroll: false });
   };
 
+  const pdfUrl = pdf && "url" in pdf ? pdf.url : undefined;
   const downloadLink = (
     <a
-      href={pdfSrc}
+      href={pdfUrl}
       download={downloadFilename}
-      className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-mono text-sm"
+      aria-disabled={!pdfUrl}
+      className={`flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-mono text-sm ${
+        pdfUrl ? "" : "pointer-events-none opacity-60"
+      }`}
     >
       <HiDownload className="w-4 h-4" />
       <span>download_pdf()</span>
@@ -178,7 +228,7 @@ function ResumeContent() {
             <ResumeHTML data={currentData} />
           </div>
         ) : (
-          <PdfFrame key={cvType} src={pdfSrc} cvType={cvType} />
+          <PdfFrame key={cvType} pdf={pdf} cvType={cvType} />
         )}
 
         {/* Production has no nav bar, so float the download button instead. */}

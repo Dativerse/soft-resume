@@ -20,11 +20,19 @@ const projectDiagrams: Record<string, DiagramTab[]> = {
       label: "Software Architecture",
       diagrams: [
         { title: "01 · API Hubs over Core Services — One PostgreSQL Database per Service", Diagram: Cashquora.ServiceMap },
+        { title: "02 · Payment Provider Routing — Schedule, Priority, Retry", Diagram: Cashquora.ProviderRouting },
       ],
     },
     {
       label: "Transaction Flow",
-      diagrams: [{ title: "01 · Asynchronous Transactions via Kafka", Diagram: Cashquora.TransactionFlow }],
+      diagrams: [
+        { title: "01 · Partner Deposit — Stateless Platform Integration", Diagram: Cashquora.PlatformDeposit },
+        { title: "02 · Admin Payout — Kafka Request / Completed Events", Diagram: Cashquora.AdminPayout },
+      ],
+    },
+    {
+      label: "Database Flow",
+      diagrams: [{ title: "01 · Atomic Wallet Updates — Row Locks + Optimistic Versioning", Diagram: Cashquora.WalletConsistency }],
     },
   ],
   s1: [

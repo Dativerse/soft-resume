@@ -43,7 +43,6 @@ const fullstackResume: ResumeData = {
       achievements: [
         "Building SaaS and financial products end-to-end for clients, from requirements and system design to production delivery",
         "Developing full-stack features with React and Node.js, covering customer-facing apps, admin dashboards, and billing flows",
-        "Designing secure data models and integrating payment and financial third-party services for reliable transaction handling",
       ],
     },
     {
@@ -89,12 +88,13 @@ const fullstackResume: ResumeData = {
       title: "Cashquora",
       url: "/projects/cashquora",
       description:
-        "End-to-end payment gateway platform with multi-currency support and AI-assisted development workflow",
-      techStack: [".NET", "PostgreSQL", "Redis", "React", "Kubernetes", "AI Agents"],
+        "White-label digital wallet and payment hub that lets partner platforms take deposits and pay out withdrawals through local payment providers in 5 currencies across Southeast and South Asia",
+      techStack: [".NET 8", "PostgreSQL", "Dapper", "Kafka", "Redis", "React", "TypeScript", "AWS EKS", "AI Agents"],
       period: "Sep 2025 - Jan 2026",
       achievements: [
-        "Built fullstack features for secure transaction processing and real-time payment status tracking",
-        "Developed a unified admin dashboard for managing cross-country transactions and provider configurations",
+        "Built deposit and withdrawal flows end to end across a user portal, an admin portal and .NET microservices that talk over Kafka",
+        "Integrated local payment providers and banks with priority-based auto-selection, time-of-day provider schedules and admin retry of failed payouts",
+        "Delivered admin tooling for multi-approval withdrawals, bank deposit reconciliation and live transaction updates over Server-Sent Events",
         "Integrated AI agents into the dev loop to automate code reviews and documentation",
       ],
     },
@@ -139,9 +139,7 @@ const backendResume: ResumeData = {
       endDate: "Present",
       achievements: [
         "Building backends for SaaS and financial products, from requirements and system design to production delivery",
-        "Designing multi-tenant APIs, database schemas, and subscription/billing logic with Node.js, PostgreSQL, and Redis",
-        "Integrating payment and financial third-party services with a focus on data consistency, security, and auditability",
-      ],
+        "Designing multi-tenant APIs, database schemas, and subscription/billing logic with Node.js, PostgreSQL, and Redis",      ],
     },
     {
       company: "ConsultechAilab",
@@ -188,9 +186,10 @@ const backendResume: ResumeData = {
     {
       ...fullstackResume.projects[0],
       achievements: [
-        "Implemented distributed database architecture with PostgreSQL and Redis for high-availability transactions",
-        "Engineered secure, stateless API endpoints for third-party provider integrations",
-        "Designed a background worker system for asynchronous transaction reconciliation and reporting",
+        "Built deposit and withdrawal flows end to end across a user portal, an admin portal and .NET microservices that talk over Kafka",
+        "Integrated local payment providers and banks with priority-based auto-selection, time-of-day provider schedules and admin retry of failed payouts",
+        "Delivered admin tooling for multi-approval withdrawals, bank deposit reconciliation and live transaction updates over Server-Sent Events",
+        "Integrated AI agents into the dev loop to automate code reviews and documentation",
       ],
     },
     {

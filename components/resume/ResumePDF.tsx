@@ -304,7 +304,7 @@ const resolveUrl = (url: string | undefined | null, origin: string): string | nu
     return url;
   }
   // A relative link is dead inside a downloaded PDF, so only link it when an
-  // origin (NEXT_PUBLIC_SITE_URL) is known.
+  // origin (the page's own, at render time) is known.
   if (!origin) return null;
   return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
 };
