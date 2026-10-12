@@ -17,14 +17,16 @@ feature.
   pages) point at whichever host served the page — no site URL to
   configure. The "PDF View" tab and the download button both use the
   resulting blob URL.
-- **`lib/resume/data.ts`** — resume content. `resumes` is a
+- **`lib/resume/data.ts`** — resume registry. `resumes` is a
   `Record<cvType, ResumeData>`; add more keys to get more CV variants
-  switchable via `?cvType=` and the top-nav tabs.
+  switchable via `?cvType=` and the top-nav tabs. Each variant has its own
+  file (`fullstack.ts`, `backend.ts`); content shared by all variants
+  (personal info, education, certifications) is in `common.ts`.
 - **`lib/resume/types.ts`** — the shared `ResumeData` shape.
 
 ## Before you ship this
 
-`lib/resume/data.ts` is filled with placeholder content ("Your Name",
+The files in `lib/resume/` are filled with placeholder content ("Your Name",
 `you@example.com`, etc.) — replace it with your real resume data.
 
 ## Develop
