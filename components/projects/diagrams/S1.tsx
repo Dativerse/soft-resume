@@ -1,14 +1,13 @@
-import { FaBell, FaCreditCard, FaDesktop, FaExchangeAlt, FaGlobe, FaPlug, FaServer, FaUserShield, FaUsers } from "react-icons/fa";
+import { FaCreditCard, FaDesktop, FaExchangeAlt, FaGlobe, FaPlug, FaServer, FaUserShield, FaUsers } from "react-icons/fa";
 import { SiMysql } from "react-icons/si";
 import { ArrowDown, Canvas, Chip, FanOut, Frame, Node, Notes } from "./primitives";
 
 const coreServices = [
   { title: "Client Service", subtitle: "client API · discount logic", icon: <FaUsers /> },
-  { title: "Transaction Service", subtitle: "lifecycle · ledger · balances", icon: <FaExchangeAlt /> },
+  { title: "Transaction Consumer", subtitle: "lifecycle · ledger · balances", icon: <FaExchangeAlt /> },
   { title: "Integration Service", subtitle: "3rd-party orchestration", icon: <FaPlug /> },
   { title: "Payment Service", subtitle: "making payments only", icon: <FaCreditCard /> },
   { title: "Admin Service", subtitle: "backoffice · config", icon: <FaUserShield /> },
-  { title: "Notification Service", subtitle: "push · email · SMS", icon: <FaBell /> },
 ];
 
 const mysql = (owner: string) => (
