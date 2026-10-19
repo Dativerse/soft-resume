@@ -12,7 +12,7 @@ export const fullstackResume: ResumeData = {
       position: "Software Engineer",
       location: "Remote",
       startDate: "May 2026",
-      endDate: "Present",
+      endDate: "Oct 2026",
       achievements: [
         "Building SaaS and financial products end-to-end for clients, from requirements and system design to production delivery",
         "Developing full-stack features with React and Node.js, covering customer-facing apps, admin dashboards, and billing flows",

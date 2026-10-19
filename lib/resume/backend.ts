@@ -13,7 +13,7 @@ export const backendResume: ResumeData = {
       position: "Software Engineer",
       location: "Remote",
       startDate: "May 2026",
-      endDate: "Present",
+      endDate: "Oct 2026",
       achievements: [
         "Building backends for SaaS and financial products, from requirements and system design to production delivery",
         "Designing multi-tenant APIs, database schemas, and subscription/billing logic with Node.js, PostgreSQL, and Redis",
