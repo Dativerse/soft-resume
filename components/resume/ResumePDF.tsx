@@ -517,7 +517,7 @@ const ResumePDF = ({ data, type = "default", origin = "" }: ResumePDFProps) => (
                   {project.period && (
                     <>
                       <Text style={styles.contactSeparator}>|</Text>
-                      <Text style={styles.projectPeriod}>{project.period}</Text>
+                      <Text style={styles.projectPeriod}>{`${project.period}\u00A0`}</Text>
                     </>
                   )}
                 </View>
