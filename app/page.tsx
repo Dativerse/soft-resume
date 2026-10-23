@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { HiDownload } from "react-icons/hi";
 import ResumeHTML from "@/components/resume/ResumeHTML";
+import { CV_TYPE_PARAM, parseCvType, readStoredCvType, storeCvType } from "@/lib/resume/cvType";
 import { defaultCvType, resumes } from "@/lib/resume/data";
 
 type ViewMode = "web" | "pdf";
@@ -12,16 +13,6 @@ type ViewMode = "web" | "pdf";
 // single CV as a PDF: the `cvType` query param is saved to localStorage and
 // then stripped from the URL, so later visits keep showing that CV.
 const IS_DEV = process.env.NODE_ENV === "development";
-const CV_TYPE_STORAGE_KEY = "cvType";
-
-function readStoredCvType() {
-  try {
-    const stored = window.localStorage.getItem(CV_TYPE_STORAGE_KEY);
-    return stored && resumes[stored] ? stored : null;
-  } catch {
-    return null;
-  }
-}
 
 const noopSubscribe = () => () => {};
 
@@ -110,8 +101,7 @@ function ResumeContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const cvTypeParam = searchParams.get("cvType")?.toLowerCase();
-  const validParam = cvTypeParam && resumes[cvTypeParam] ? cvTypeParam : null;
+  const validParam = parseCvType(searchParams.get(CV_TYPE_PARAM));
   const [viewMode, setViewMode] = useState<ViewMode>(IS_DEV ? "web" : "pdf");
 
   // localStorage is unavailable during prerender, so the server snapshot is
@@ -123,14 +113,10 @@ function ResumeContent() {
   // snapshot is re-read on the next render, so the CV shown doesn't change.
   useEffect(() => {
     if (IS_DEV || !validParam) return;
-    try {
-      window.localStorage.setItem(CV_TYPE_STORAGE_KEY, validParam);
-    } catch {
-      // Storage blocked (e.g. private mode) — keep the query param as the source.
-      return;
-    }
+    // Storage blocked (e.g. private mode) — keep the query param as the source.
+    if (!storeCvType(validParam)) return;
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("cvType");
+    params.delete(CV_TYPE_PARAM);
     const query = params.toString();
     router.replace(query ? `/?${query}` : "/", { scroll: false });
   }, [router, searchParams, validParam]);
@@ -150,7 +136,7 @@ function ResumeContent() {
 
   const handleTypeChange = (typeId: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("cvType", typeId);
+    params.set(CV_TYPE_PARAM, typeId);
     router.replace(`/?${params.toString()}`, { scroll: false });
   };
 
@@ -225,7 +211,7 @@ function ResumeContent() {
       <div className="flex-1 relative bg-gray-900 overflow-hidden">
         {viewMode === "web" ? (
           <div className="w-full h-full overflow-y-auto p-4 sm:p-6 bg-gray-900">
-            <ResumeHTML data={currentData} />
+            <ResumeHTML data={currentData} cvType={cvType} />
           </div>
         ) : (
           <PdfFrame key={cvType} pdf={pdf} cvType={cvType} />

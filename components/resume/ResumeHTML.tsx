@@ -1,22 +1,25 @@
 import { HiExternalLink, HiMail, HiPhone, HiLocationMarker } from "react-icons/hi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { withCvType } from "@/lib/resume/cvType";
 import type { ResumeData } from "@/lib/resume/types";
 
 interface ResumeHTMLProps {
   data: ResumeData;
   /** Origin to prefix relative project links with (e.g. "https://example.com"). Leave empty for relative links. */
   origin?: string;
+  /** CV variant added to internal project links, so the project page can remember it. */
+  cvType?: string;
 }
 
-const formatUrl = (url?: string | null, origin = ""): string | null => {
+const formatUrl = (url?: string | null, origin = "", cvType?: string): string | null => {
   if (!url) return null;
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("mailto:") || url.startsWith("tel:")) {
     return url;
   }
-  return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
+  return `${origin}${withCvType(url.startsWith("/") ? url : `/${url}`, cvType)}`;
 };
 
-export default function ResumeHTML({ data, origin = "" }: ResumeHTMLProps) {
+export default function ResumeHTML({ data, origin = "", cvType }: ResumeHTMLProps) {
   return (
     <div className="w-full max-w-[850px] mx-auto bg-white text-gray-900 shadow-2xl rounded-sm p-6 sm:p-10 font-sans leading-relaxed text-sm my-6 border border-gray-200">
       {/* Header Section */}
@@ -180,7 +183,8 @@ export default function ResumeHTML({ data, origin = "" }: ResumeHTMLProps) {
               exp.projects.map((project, pIdx) => {
                 const projectUrl = formatUrl(
                   project.link || project.url || project.githubUrl || project.liveUrl || project.evidence,
-                  origin
+                  origin,
+                  cvType
                 );
 
                 return (
@@ -227,7 +231,7 @@ export default function ResumeHTML({ data, origin = "" }: ResumeHTMLProps) {
         </h2>
         {data.projects.map((project, index) => {
           const rawUrl = project.evidence || project.link || project.url || project.githubUrl || project.liveUrl;
-          const projectUrl = formatUrl(rawUrl, origin);
+          const projectUrl = formatUrl(rawUrl, origin, cvType);
 
           return (
             <div key={index} className="mb-3">

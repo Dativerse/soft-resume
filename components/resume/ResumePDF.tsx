@@ -1,4 +1,5 @@
 import { Document, Page, Text, View, StyleSheet, Link, Svg, Path, Rect, Font } from "@react-pdf/renderer";
+import { withCvType } from "@/lib/resume/cvType";
 import type { ResumeData } from "@/lib/resume/types";
 
 // Register Roboto font (supports Vietnamese and other extended Latin characters)
@@ -298,7 +299,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const resolveUrl = (url: string | undefined | null, origin: string): string | null => {
+const resolveUrl = (url: string | undefined | null, origin: string, cvType: string): string | null => {
   if (!url) return null;
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("mailto:") || url.startsWith("tel:")) {
     return url;
@@ -306,7 +307,7 @@ const resolveUrl = (url: string | undefined | null, origin: string): string | nu
   // A relative link is dead inside a downloaded PDF, so only link it when an
   // origin (the page's own, at render time) is known.
   if (!origin) return null;
-  return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
+  return `${origin}${withCvType(url.startsWith("/") ? url : `/${url}`, cvType)}`;
 };
 
 interface ResumePDFProps {
@@ -451,7 +452,8 @@ const ResumePDF = ({ data, type = "default", origin = "" }: ResumePDFProps) => (
               exp.projects.map((project, pIdx) => {
                 const formattedUrl = resolveUrl(
                   project.link || project.url || project.githubUrl || project.liveUrl || project.evidence,
-                  origin
+                  origin,
+                  type
                 );
 
                 return (
@@ -494,7 +496,8 @@ const ResumePDF = ({ data, type = "default", origin = "" }: ResumePDFProps) => (
         {data.projects.map((project, index) => {
           const formattedUrl = resolveUrl(
             project.evidence || project.link || project.url || project.githubUrl || project.liveUrl,
-            origin
+            origin,
+            type
           );
 
           return (

@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { HiArrowLeft } from "react-icons/hi";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import BackToResumeLink from "./BackToResumeLink";
 import type { DiagramTab } from "./diagrams";
 import DiagramTabs from "./DiagramTabs";
 
@@ -44,13 +43,7 @@ export default function ProjectPageShell({
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 font-sans flex flex-col">
       <header className="max-w-5xl w-full mx-auto px-6 pt-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors font-mono"
-        >
-          <HiArrowLeft className="w-4 h-4" />
-          <span>back_to_resume()</span>
-        </Link>
+        <BackToResumeLink />
       </header>
 
       <main className="flex-1 max-w-5xl w-full mx-auto px-6 py-10 space-y-10">
