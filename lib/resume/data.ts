@@ -11,7 +11,7 @@ export const resumes: Record<string, ResumeData> = {
 };
 
 /** CV variant shown when no (or an unknown) `cvType` is requested. */
-export const defaultCvType = "fullstack";
+export const defaultCvType = "backend";
 
 export const resumeData = resumes[defaultCvType];
 
